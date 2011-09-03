@@ -4,6 +4,8 @@ package typinghaskell
 
 case class Subst(mappings: Seq[(TyVar, Type)]) {
   
+  import Subst._
+  
   def lookup(v: TyVar) =
     mappings.find { case (tv, _) => tv == v }.map { case (_, t) => t }
   
@@ -26,6 +28,11 @@ case class Subst(mappings: Seq[(TyVar, Type)]) {
   
 }
 
+trait Types[T] {
+  def apply(subst: Subst): T
+  def tv: List[TyVar]
+}
+
 object Subst {
   
   val nullSubst = Subst(Nil)
@@ -33,10 +40,25 @@ object Subst {
   implicit def tyVar2SingletonSubst(v: TyVar) = new {
     def +->(t: Type) = Subst(List((v, t)))
   }
+  
+  implicit def type2Types(t: Type): Types[Type] = new Types[Type] {
+    def apply(subst: Subst): Type = t match {
+      case t: TyVar           => subst.lookup(t).getOrElse(t)
+      case TyApp(left, right) => TyApp(left.apply(subst), right.apply(subst))
+      case _                  => t
+      
+    }
+    
+    def tv: List[TyVar] = t match {
+      case t: TyVar           => List(t)
+      case TyApp(left, right) => left.tv union right.tv
+      case _                  => Nil
+    }
+  }
+  
+  implicit def list2Types[T <% Types[T]](ts: List[T]) = new Types[List[T]] {
+    def apply(subst: Subst) = ts.map(_.apply(subst))
+    
+    def tv: List[TyVar] = ts.flatMap(_.tv).distinct
+  }
 }
-
-trait Types[T] {
-  def apply(subst: Subst): T
-  def tv: List[TyVar]
-}
-

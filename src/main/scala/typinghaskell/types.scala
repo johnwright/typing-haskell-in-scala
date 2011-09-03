@@ -4,20 +4,11 @@ import Ids._
 
 // 4 Types
 
-sealed abstract class Type extends Types[Type] {
+sealed abstract class Type {
   def kind: Kind
-  
-  def apply(subst: Subst) = this
-  
-  def tv: List[TyVar] = Nil
 }
 
-case class TyVar(id: Id, kind: Kind) extends Type {
-  
-  override def apply(subst: Subst) = subst.lookup(this).getOrElse(this)
-  
-  override def tv: List[TyVar] = List(this)
-}
+case class TyVar(id: Id, kind: Kind) extends Type
 
 case class TyCon(id: Id, kind: Kind) extends Type
 
@@ -26,10 +17,6 @@ case class TyApp(left: Type, right: Type) extends Type {
     case KFun(_, k) => k
     case _ => throw new IllegalArgumentException("inconsistent type")
   }
-  
-  override def apply(subst: Subst) = TyApp(left.apply(subst), right.apply(subst))
-  
-  override def tv: List[TyVar] = left.tv union right.tv
 }
 
 case class TyGen(num: Int) extends Type {

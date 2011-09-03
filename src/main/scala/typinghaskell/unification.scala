@@ -23,7 +23,7 @@ object Unification {
   
   def varBind(v: TyVar, t: Type): Option[Subst] =
     if (t == v)
-      Some(Subst.nullSubst)
+      Some(nullSubst)
     else if (t.tv contains v)
       None // occurs check failed
     else if (v.kind != t.kind)
