@@ -48,3 +48,24 @@ object Pred {
   
   val oneWayMatchPred = lift(Unification.oneWayMatch _) _
 }
+
+object Class {
+  
+  import Pred._
+  
+  type Class = (List[Id], List[Inst])
+  
+  type Inst = Qual[Pred]
+  
+  case class ClassEnv(classes: Id => Option[Class], defaults: List[Type])
+  
+  def superClasses(ce: ClassEnv, id: Id) = ce.classes(id) match {
+    case Some((ids, _)) => ids
+    case _              => Nil
+  }
+  
+  def insts(ce: ClassEnv, id: Id) = ce.classes(id) match {
+    case Some((_, instances)) => instances
+    case _                    => Nil
+  }
+}
