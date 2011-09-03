@@ -1,5 +1,7 @@
 package typinghaskell
 
+import Subst._
+
 // 6 Unification and Matching
 
 object Unification {
@@ -14,7 +16,7 @@ object Unification {
     
     case (t, v: TyVar) => varBind(v, t)
     
-    case (tc1: TyCon, tc2: TyCon) if tc1 == tc2 => Some(Subst.nullSubst)
+    case (tc1: TyCon, tc2: TyCon) if tc1 == tc2 => Some(nullSubst)
     
     case _ => None
   }
@@ -38,7 +40,7 @@ object Unification {
     
     case (v: TyVar, t) if v.kind == t.kind => Some(v +-> t)
     
-    case (tc1: TyCon, tc2: TyCon) if tc1 == tc2 => Some(Subst.nullSubst)
+    case (tc1: TyCon, tc2: TyCon) if tc1 == tc2 => Some(nullSubst)
     
     case _ => None
   }

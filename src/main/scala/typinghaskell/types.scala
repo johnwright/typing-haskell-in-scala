@@ -14,8 +14,6 @@ sealed abstract class Type extends Types[Type] {
 
 case class TyVar(id: Id, kind: Kind) extends Type {
   
-  def +->(t: Type) = Subst.singletonSubst(this, t)
-  
   override def apply(subst: Subst) = subst.lookup(this).getOrElse(this)
   
   override def tv: List[TyVar] = List(this)

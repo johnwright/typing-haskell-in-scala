@@ -30,7 +30,9 @@ object Subst {
   
   val nullSubst = Subst(Nil)
   
-  def singletonSubst(v: TyVar, t: Type) = Subst(List((v, t)))
+  implicit def tyVar2SingletonSubst(v: TyVar) = new {
+    def +->(t: Type) = Subst(List((v, t)))
+  }
 }
 
 trait Types[T] {
