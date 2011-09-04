@@ -126,4 +126,13 @@ object Class {
   
   def overlap(p: Pred, q: Pred) =
     mguPred(p, q).isDefined
+  
+  def exampleInsts = (addPreludeClasses
+                  <:> addInst(Nil :=> IsIn("Ord", TypeHelpers.unitType))
+                  <:> addInst(Nil :=> IsIn("Ord", TypeHelpers.charType))
+                  <:> addInst(Nil :=> IsIn("Ord", TypeHelpers.intType))
+                  <:> addInst(List(IsIn("Ord", TyVar("a", Star)),
+                                   IsIn("Ord", TyVar("b", Star)))
+                               :=> IsIn("Ord", TypeHelpers.pair(TyVar("a", Star),
+                                                                TyVar("b", Star)))))
 }
